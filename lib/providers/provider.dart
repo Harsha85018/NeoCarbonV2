@@ -1,5 +1,6 @@
 import 'package:decarbonus/models/blogs_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dio/dio.dart';
 
 final isLoading = StateProvider((ref) => false);
 final authRes = StateProvider((ref) => '');
@@ -13,4 +14,4 @@ final statuscode = StateProvider((ref) => 0);
 
 final subscriptionProvider = StateProvider((ref) => 0);
 
-final blogsProvider = StateProvider<List<BlogsModel>>((ref) => []);
+final blogsProvider = StateProvider<List<Blog>>((ref) => []);

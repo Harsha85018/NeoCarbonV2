@@ -1,140 +1,113 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../../providers/provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class Blogs extends ConsumerWidget {
-  const Blogs({super.key});
+class BlogList extends StatefulWidget {
+  @override
+  _BlogListState createState() => _BlogListState();
+}
+
+class _BlogListState extends State<BlogList> {
+  List blogs = [];
+
+  Future fetchBlogs() async {
+    var response =
+        await http.get(Uri.https('carbonfootprint.onrender.com', '/blogs'));
+    setState(() {
+      blogs = json.decode(response.body);
+    });
+  }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final blogs = ref.watch(blogsProvider);
-    return SafeArea(
-      child: Scaffold(
-        body: blogs.isEmpty
-            ? Center(
-                child: Text(
-                  'Cannot load blogs',
-                  style: TextStyle(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              )
-            : ListView.builder(
-                itemCount: blogs.length,
-                itemBuilder: (context, index) {
-                  return BlogPage(
-                    title: blogs[index].title,
-                    description: blogs[index].desc,
-                    image: blogs[index].image,
-                    author: blogs[index].author,
-                    link: blogs[index].link,
-                  );
-                },
+  void initState() {
+    super.initState();
+    fetchBlogs();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Carbon Footprint Blogs'),
+      ),
+      body: ListView.builder(
+        itemCount: blogs.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            leading: Image.network(
+              blogs[index]['image'],
+              width: 80,
+              height: 80,
+            ),
+            title: Text(
+              blogs[index]['title'],
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
               ),
+            ),
+            subtitle: Text(
+              'By ${blogs[index]['author']}',
+              style: TextStyle(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BlogDetail(blog: blogs[index]),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
 }
 
-class BlogPage extends StatelessWidget {
-  const BlogPage({
-    required this.title,
-    required this.description,
-    required this.image,
-    required this.author,
-    required this.link,
-    super.key,
-  });
+class BlogDetail extends StatelessWidget {
+  final blog;
 
-  final String title;
-  final String description;
-  final String image;
-  final String author;
-  final String link;
-
-  void _launchUrl() {
-    final uri = Uri.parse(link);
-
-    launchUrl(uri);
-  }
+  BlogDetail({this.blog});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Column(
-          children: <Widget>[
-            CachedNetworkImage(
-              imageUrl: image,
-              imageBuilder: (context, imageProvider) => Container(
-                height: 200,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(15),
-                    topRight: Radius.circular(15),
-                  ),
-                  image: DecorationImage(
-                    image: imageProvider,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              placeholder: (context, url) => const Center(
-                child: CircularProgressIndicator(),
-              ),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(blog['title']),
+      ),
+      body: Column(
+        children: [
+          Image.network(
+            blog['image'],
+            width: double.infinity,
+            height: 200,
+            fit: BoxFit.cover,
+          ),
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              blog['desc'],
+              style: TextStyle(fontSize: 18),
             ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    description,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        author,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                      Container(
-                        alignment: Alignment.centerRight,
-                        child: ElevatedButton(
-                          onPressed: _launchUrl,
-                          child: const Text("Read More"),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              'By ${blog['author']}',
+              style: TextStyle(fontStyle: FontStyle.italic),
             ),
-          ],
-        ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.0),
+            child: ElevatedButton(
+              onPressed: () {},
+              child: Text('Read More'),
+            ),
+          ),
+        ],
       ),
     );
   }

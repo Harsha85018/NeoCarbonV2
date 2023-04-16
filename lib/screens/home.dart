@@ -1,5 +1,8 @@
+import 'package:decarbonus/screens/bottombar/blogs.dart';
+import 'package:decarbonus/screens/dailyactivity.dart';
+import 'package:decarbonus/screens/overallactivity.dart';
 import 'package:decarbonus/screens/projects.dart';
-import 'package:decarbonus/utils/get_blogs.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +20,7 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
-    getBlogs(ref, context);
+    BlogList();
     super.initState();
   }
 
@@ -37,7 +40,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           child: Column(
             children: [
               Container(
-                height: MediaQuery.of(context).size.height * 0.5.sp,
+                height: MediaQuery.of(context).size.height * 0.4.sp,
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(25),
@@ -57,7 +60,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       series: <CircularSeries>[
                         RadialBarSeries<ChartData, String>(
                             useSeriesColor: true,
-                            radius: '120',
+                            radius: '140',
                             trackOpacity: 0.3,
                             cornerStyle: CornerStyle.bothCurve,
                             dataSource: chartData,
@@ -70,20 +73,20 @@ class _HomePageState extends ConsumerState<HomePage> {
                       children: [
                         Column(
                           children: const [
-                            Text("data"),
+                            Text("Carbon Emission Data"),
                             Text("56"),
                           ],
                         ),
                         Column(
                           children: const [
-                            Text("data"),
-                            Text("56"),
+                            Text("Travel"),
+                            Text("24"),
                           ],
                         ),
                         Column(
                           children: const [
-                            Text("data"),
-                            Text("56"),
+                            Text("Overall"),
+                            Text("90"),
                           ],
                         ),
                       ],
@@ -98,29 +101,50 @@ class _HomePageState extends ConsumerState<HomePage> {
                 "Tracks",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
               ),
-              Container(
-                margin: EdgeInsets.all(10.sp),
-                width: MediaQuery.of(context).size.width * 0.9.sp,
-                height: MediaQuery.of(context).size.height * 0.05.sp,
-                decoration: BoxDecoration(
-                  color: Colors.lightGreenAccent.shade100,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(40.sp),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) => const DailyActivityScreen(),
+                    ),
+                  );
+                },
+                child: Container(
+                  margin: EdgeInsets.all(10.sp),
+                  width: MediaQuery.of(context).size.width * 0.9.sp,
+                  height: MediaQuery.of(context).size.height * 0.05.sp,
+                  decoration: BoxDecoration(
+                    color: Colors.lightGreenAccent.shade100,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(40.sp),
+                    ),
                   ),
+                  child: const Center(child: Text("Daily Activity")),
                 ),
-                child: const Center(child: Text("Daily Activity")),
               ),
-              Container(
-                margin: EdgeInsets.all(10.sp),
-                width: MediaQuery.of(context).size.width * 0.9.sp,
-                height: MediaQuery.of(context).size.height * 0.05.sp,
-                decoration: BoxDecoration(
-                  color: Colors.lightGreenAccent.shade100,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(40.sp),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) =>
+                          const OverallActivityScreen(overallEmissions: 700),
+                    ),
+                  );
+                },
+                child: Container(
+                  margin: EdgeInsets.all(10.sp),
+                  width: MediaQuery.of(context).size.width * 0.9.sp,
+                  height: MediaQuery.of(context).size.height * 0.05.sp,
+                  decoration: BoxDecoration(
+                    color: Colors.lightGreenAccent.shade100,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(40.sp),
+                    ),
                   ),
+                  child: const Center(child: Text("Overall Activity")),
                 ),
-                child: const Center(child: Text("Daily Activity")),
               ),
               SizedBox(
                 height: 35.sp,

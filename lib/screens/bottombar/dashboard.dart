@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../models/blogs_model.dart';
 import 'blogs.dart';
 import '../home.dart';
 import 'ngo_maps.dart';
@@ -20,7 +21,7 @@ class _DashBoardState extends State<DashBoard> {
   final List<Widget> _pages = [
     const HomePage(),
     const NgoMaps(),
-    const Blogs(),
+    BlogList(),
     const SettingsPage(),
   ];
 

@@ -1,41 +1,28 @@
-// To parse this JSON data, do
-//
-//     final blogsModel = blogsModelFromJson(jsonString);
+class Blog {
+  final int id;
+  final String title;
+  final String desc;
+  final String author;
+  final String image;
+  final String link;
 
-import 'dart:convert';
+  Blog({
+    required this.id,
+    required this.title,
+    required this.desc,
+    required this.author,
+    required this.image,
+    required this.link,
+  });
 
-List<BlogsModel> blogsModelFromJson(String str) => List<BlogsModel>.from(json.decode(str).map((x) => BlogsModel.fromJson(x)));
-
-String blogsModelToJson(List<BlogsModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
-
-class BlogsModel {
-    BlogsModel({
-        required this.title,
-        required this.image,
-        required this.desc,
-        required this.author,
-        required this.link,
-    });
-
-    String title;
-    String image;
-    String desc;
-    String author;
-    String link;
-
-    factory BlogsModel.fromJson(Map<String, dynamic> json) => BlogsModel(
-        title: json["title"],
-        image: json["image"],
-        desc: json["desc"],
-        author: json["author"],
-        link: json["link"],
+  factory Blog.fromJson(Map<String, dynamic> json) {
+    return Blog(
+      id: json['id'],
+      title: json['title'],
+      desc: json['desc'],
+      author: json['author'],
+      image: json['image'],
+      link: json['link'],
     );
-
-    Map<String, dynamic> toJson() => {
-        "title": title,
-        "image": image,
-        "desc": desc,
-        "author": author,
-        "link": link,
-    };
+  }
 }
